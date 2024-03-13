@@ -1,7 +1,7 @@
 clear;
 load 'EMG.txt';
 
-A=[EMG(:,2) EMG(:,3)];
+A=[EMG(:,1) EMG(:,2)];
 
 y = [];
 x = EMG(4:size(EMG,1)-3,1);
