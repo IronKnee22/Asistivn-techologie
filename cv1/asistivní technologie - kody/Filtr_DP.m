@@ -1,8 +1,8 @@
 
 clear all;
 clc
-%z=tf('z');
-syms  z
+z=tf('z');
+%syms  z
 
 %digital frequency (f1=1 Hz)frek rezu
 
