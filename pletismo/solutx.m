@@ -1,6 +1,5 @@
-clear all;
 clc;
-
+clear all;
 x=[0.038;0.194;0.425;0.626;1.253;2.5;3.74];
 y=[0.05;0.127;0.094;0.2122;0.2729;0.2665;0.3317];
 
@@ -16,7 +15,7 @@ res(:,n)=y-((beta1(n).*x)./(beta2(n)+x))
 
 J(:,1)=-x./(beta2(n)+x)
 
-J(:,2)=(beta1(n).*x)./((beta2(n)+x)'*(beta2(n)+x))
+J(:,2)=(beta1(n).*x)./((beta2(n)+x).*(beta2(n)+x))
 
 % kontrola
 JJ(:,:,n)=J;
@@ -35,4 +34,10 @@ beta2(n)=beta(2,n);
 
 
 end
+y_regression = beta(1,end) .* x ./ (beta(2,end) + x);
 
+% Zobrazení grafu dat a regresní funkce
+figure;
+plot(x, y); % Zobrazíme data
+hold on;
+plot(x, y_regression, 'r-'); % Zobrazíme regresní funkci

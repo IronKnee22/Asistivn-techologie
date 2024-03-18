@@ -1,22 +1,41 @@
-% Načtení dat BPM
+clc;
+close all;
 
+x = 1:282;
+y = bpm;
 
-% Přizpůsobení polynomiální regrese
-degree = 3; % Zvolte stupeň polynomu
-p = polyfit(1:length(bpm), bpm, degree); % Přizpůsobení polynomiálního modelu
+beta1(1) = 111;
+beta2(1) = 1;
+n = 1;
 
+while(n < 200)
+    beta(:,n) = [beta1(n); beta2(n)];
 
+    res(:,n) = y - ((beta1(n) .* x) ./ (beta2(n) + x));
+    J(:,1) = -x ./ (beta2(n) + x);
+    J(:,2) = (beta1(n) .* x) ./ ((beta2(n) + x) .* (beta2(n) + x));
 
-% Hodnoty x pro vykreslení regresní čáry
-x_values = linspace(1, length(bpm), 100);
-y_values = polyval(p, x_values);
+    % Kontrola
+    JJ(:,:,n) = J;
 
-% Vykreslení výsledků
+    pseudoJ = inv(J' * J) * J';
+    jednotkova = pseudoJ * J;
+
+    %beta(:,n+1) = beta(:,n) - 0.05 .* pseudoJ * res(:,n);
+    beta(:,n+1) = beta(:,n) - 0.05 .* J' * res(:,n);
+
+    n = n + 1;
+    beta1(n) = beta(1,n);
+    beta2(n) = beta(2,n);
+    %rozdil = abs(res(:,n));
+end
+
+% Vypočítané hodnoty regresní funkce pro všechny hodnoty x
+y_regression = beta(1,end) .* x ./ (beta(2,end) + x);
+
+% Zobrazení grafu dat a regresní funkce
 figure;
-plot(bpm);
+plot(x, y); % Zobrazíme data
 hold on;
-plot(x_values, y_values, 'r--', 'LineWidth', 2);
-legend('BPM', 'Polynomiální regresní čára');
-xlabel('Časový index');
-ylabel('BPM');
-title('Polynomiální regresní čára přizpůsobená datům');
+plot(x, y_regression, 'r-'); % Zobrazíme regresní funkci
+
