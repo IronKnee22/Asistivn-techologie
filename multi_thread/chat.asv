@@ -1,0 +1,24 @@
+while true
+    readDataFuture = parfeval(@readData,0);
+
+parfeval(@vytvorenidat,0);
+end
+
+
+function vytvorenidat()
+    s = serialport('COM4', 9600);
+    while true
+        data = 4;
+        writeline(s, num2str(data));
+        pause(0.1);
+    end
+end
+
+function data = readData()
+    inputPort = serialport("COM5", 9600);
+    while true
+        data = readline(inputPort);
+    end
+end
+
+

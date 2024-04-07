@@ -1,41 +1,49 @@
-clc;
-close all;
+% Načtení dat (t, y)
 
-x = 1:282;
+t = 1:282;
 y = bpm;
 
-beta1(1) = 111;
-beta2(1) = 1;
-n = 1;
+% Definice exponenciální funkce
+exp_fun = @(b, t) b(1) * exp(-b(2) * t);
 
-while(n < 200)
-    beta(:,n) = [beta1(n); beta2(n)];
+% Počáteční odhady parametrů
+beta = [1, 1]; % můžete si zvolit jiné počáteční odhady
 
-    res(:,n) = y - ((beta1(n) .* x) ./ (beta2(n) + x));
-    J(:,1) = -x ./ (beta2(n) + x);
-    J(:,2) = (beta1(n) .* x) ./ ((beta2(n) + x) .* (beta2(n) + x));
+% Hyperparametry gradientního sestupu
+learning_rate = 0.001; % velikost kroku
+max_iterations = 1000; % maximální počet iterací
+tolerance = 1e-6; % tolerance pro zastavení algoritmu
 
-    % Kontrola
-    JJ(:,:,n) = J;
-
-    pseudoJ = inv(J' * J) * J';
-    jednotkova = pseudoJ * J;
-
-    %beta(:,n+1) = beta(:,n) - 0.05 .* pseudoJ * res(:,n);
-    beta(:,n+1) = beta(:,n) - 0.05 .* J' * res(:,n);
-
-    n = n + 1;
-    beta1(n) = beta(1,n);
-    beta2(n) = beta(2,n);
-    %rozdil = abs(res(:,n));
+% Iterativní optimalizace pomocí gradientního sestupu
+for iter = 1:max_iterations
+    % Výpočet gradientu
+    grad = zeros(size(beta));
+    for i = 1:length(beta)
+        % Numerický výpočet gradientu
+        beta_up = beta;
+        beta_up(i) = beta_up(i) + tolerance;
+        grad(i) = (sum((y - exp_fun(beta_up, t)) .^ 2) - sum((y - exp_fun(beta, t)) .^ 2)) / tolerance;
+    end
+    
+    % Aktualizace parametrů
+    beta = beta - learning_rate * grad;
+    
+    % Kritérium zastavení
+    if norm(grad) < tolerance
+        break;
+    end
 end
 
-% Vypočítané hodnoty regresní funkce pro všechny hodnoty x
-y_regression = beta(1,end) .* x ./ (beta(2,end) + x);
+% Vyhodnocení modelu
+y_pred = exp_fun(beta, t);
+RMSE = sqrt(mean((y - y_pred).^2)); % Root Mean Squared Error
 
-% Zobrazení grafu dat a regresní funkce
-figure;
-plot(x, y); % Zobrazíme data
-hold on;
-plot(x, y_regression, 'r-'); % Zobrazíme regresní funkci
+% Výstupní hodnoty
+disp(['Parametry modelu: b0 = ', num2str(beta(1)), ', b1 = ', num2str(beta(2))]);
+disp(['RMSE: ', num2str(RMSE)]);
 
+% Vizualizace výsledků
+plot(t, y, 'b', t, y_pred, 'r-');
+xlabel('Čas');
+ylabel('Hodnota y');
+legend('Data', 'Exponenciální regrese');

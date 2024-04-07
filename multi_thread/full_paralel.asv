@@ -1,0 +1,49 @@
+clear
+clc
+pool = parpool(4); 
+while true
+    
+    parfeval(@vytvorenidat, 0);
+    arduino_data = parfeval(@readData, 0);
+
+    % upravene_a_data = parfeval(@modifyData,0, arduino_data);
+    % 
+    % parfeval(@processData, 0,upravene_a_data);
+end
+
+
+fclose(inputPort);
+fclose(outputPort);
+
+
+delete(pool);
+
+function vytvorenidat()
+s = serialport('COM4', 9600);
+
+    while true
+        data = 2;
+        writeline(s, num2str(data));
+        pause(0.1);
+    end
+end
+
+function data = readData()
+inputPort = serialport("COM5", 9600);
+    while true
+        data = readline(inputPort);
+    end
+end
+
+
+function modifiedData = modifyData(data)
+    modifiedData = data * 5;
+end
+
+
+function processData(data_do_stridace)
+outputPort = serialport("COM2", 9600);
+    while true
+        writeline(outputPort, data_do_stridace);
+    end
+end
