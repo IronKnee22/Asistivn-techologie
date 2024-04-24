@@ -1,5 +1,5 @@
 clear all;
-clc;
+%clc;
 
  d10=2;
  fi21=-pi/4;
