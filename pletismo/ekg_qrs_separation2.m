@@ -2,7 +2,7 @@ clear all;
 clc
 load('ECGData.mat');
 
-ekg_signal = ECGData.Data(5,1:1000);
+ekg_signal = ECGData.Data(20,1:1000);
 
 figure;
 plot(ekg_signal,'g', 'LineWidth', 3);
